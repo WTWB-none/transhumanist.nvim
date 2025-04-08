@@ -998,6 +998,12 @@ vim.api.nvim_set_hl(0, 'TelescopeNormal', { bg = 'none' })
 vim.api.nvim_set_hl(0, 'TelescopePromptNormal', { bg = 'none' })
 vim.api.nvim_set_hl(0, 'TelescopeBorder', { bg = 'none' })
 vim.api.nvim_set_hl(0, 'TelescopePromptBorder', { bg = 'none' })
+vim.api.nvim_set_hl(0, 'DashboardHeader', { fg = '#FF7EB6' })
+vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#FF7EB6' })
+vim.api.nvim_set_hl(0, 'DashboardKey', { fg = '#FF7EB6' })
+vim.api.nvim_set_hl(0, 'DashboardDesc', { fg = '#7AC1ED' })
+vim.api.nvim_set_hl(0, 'DashboardIcon', { fg = '#FF7EB6' })
+
 require('notify').setup {
   background_colour = '#000000',
 }
