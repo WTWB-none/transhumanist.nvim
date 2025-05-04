@@ -940,9 +940,14 @@ require('lazy').setup({
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
   require 'custom.plugins.themes.oxocarbon',
+  require 'custom.plugins.themes.rosepine',
+  require 'custom.plugins.terminal.floating',
   require 'custom.plugins.explorer.fzf',
   require 'custom.plugins.dashboard.dashboard',
   require 'custom.plugins.bettercmd.noice',
+  require 'custom.plugins.zoxidenvim.zoxide',
+  require 'custom.plugins.explorer.oil',
+  require 'custom.plugins.vimbegood.VimBeGood',
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
   --  Here are some example plugins that I've included in the Kickstart repository.
@@ -986,18 +991,7 @@ require('lazy').setup({
     },
   },
 })
-vim.cmd.colorscheme 'oxocarbon'
-vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'NormalNC', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = '#51B3EC', bold = true })
-vim.api.nvim_set_hl(0, 'LineNr', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = '#FB508F', bold = true })
-vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'TelescopeNormal', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'TelescopePromptNormal', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'TelescopeBorder', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'TelescopePromptBorder', { bg = 'none' })
+vim.cmd.colorscheme 'rose-pine-moon'
 vim.api.nvim_set_hl(0, 'DashboardHeader', { fg = '#FF7EB6' })
 vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#FF7EB6' })
 vim.api.nvim_set_hl(0, 'DashboardKey', { fg = '#FF7EB6' })
@@ -1007,5 +1001,175 @@ vim.api.nvim_set_hl(0, 'DashboardIcon', { fg = '#FF7EB6' })
 require('notify').setup {
   background_colour = '#000000',
 }
+
+require('oil').setup {
+  default_file_explorer = true,
+  columns = {
+    'icon',
+  },
+  buf_options = {
+    buflisted = false,
+    bufhidden = 'hide',
+  },
+  win_options = {
+    wrap = false,
+    signcolumn = 'no',
+    cursorcolumn = false,
+    foldcolumn = '0',
+    spell = false,
+    list = false,
+    conceallevel = 3,
+    concealcursor = 'nvic',
+  },
+  delete_to_trash = false,
+  skip_confirm_for_simple_edits = false,
+  prompt_save_on_select_new_entry = true,
+  cleanup_delay_ms = 2000,
+  lsp_file_methods = {
+    enabled = true,
+    timeout_ms = 1000,
+    autosave_changes = false,
+  },
+  constrain_cursor = 'editable',
+  watch_for_changes = false,
+  keymaps = {
+    ['g?'] = { 'actions.show_help', mode = 'n' },
+    ['<CR>'] = 'actions.select',
+    ['<C-s>'] = { 'actions.select', opts = { vertical = true } },
+    ['<C-h>'] = { 'actions.select', opts = { horizontal = true } },
+    ['<C-t>'] = { 'actions.select', opts = { tab = true } },
+    ['<C-p>'] = 'actions.preview',
+    ['<C-c>'] = { 'actions.close', mode = 'n' },
+    ['<C-l>'] = 'actions.refresh',
+    ['-'] = { 'actions.parent', mode = 'n' },
+    ['_'] = { 'actions.open_cwd', mode = 'n' },
+    ['`'] = { 'actions.cd', mode = 'n' },
+    ['~'] = { 'actions.cd', opts = { scope = 'tab' }, mode = 'n' },
+    ['gs'] = { 'actions.change_sort', mode = 'n' },
+    ['gx'] = 'actions.open_external',
+    ['g.'] = { 'actions.toggle_hidden', mode = 'n' },
+    ['g\\'] = { 'actions.toggle_trash', mode = 'n' },
+  },
+  use_default_keymaps = true,
+  view_options = {
+    show_hidden = false,
+    is_hidden_file = function(name, bufnr)
+      local m = name:match '^%.'
+      return m ~= nil
+    end,
+    is_always_hidden = function(name, bufnr)
+      return false
+    end,
+    natural_order = 'fast',
+    case_insensitive = false,
+    sort = {
+      { 'type', 'asc' },
+      { 'name', 'asc' },
+    },
+    highlight_filename = function(entry, is_hidden, is_link_target, is_link_orphan)
+      return nil
+    end,
+  },
+  extra_scp_args = {},
+  git = {
+    add = function(path)
+      return false
+    end,
+    mv = function(src_path, dest_path)
+      return false
+    end,
+    rm = function(path)
+      return false
+    end,
+  },
+  float = {
+    padding = 2,
+    max_width = 0,
+    max_height = 0,
+    border = 'rounded',
+    win_options = {
+      winblend = 0,
+    },
+    get_win_title = nil,
+    preview_split = 'auto',
+    override = function(conf)
+      return conf
+    end,
+  },
+  preview_win = {
+    update_on_cursor_moved = true,
+    preview_method = 'fast_scratch',
+    disable_preview = function(filename)
+      return false
+    end,
+    win_options = {},
+  },
+  confirmation = {
+    max_width = 0.9,
+    min_width = { 40, 0.4 },
+    width = nil,
+    max_height = 0.9,
+    min_height = { 5, 0.1 },
+    height = nil,
+    border = 'rounded',
+    win_options = {
+      winblend = 0,
+    },
+  },
+  progress = {
+    max_width = 0.9,
+    min_width = { 40, 0.4 },
+    width = nil,
+    max_height = { 10, 0.9 },
+    min_height = { 5, 0.1 },
+    height = nil,
+    border = 'rounded',
+    minimized_border = 'none',
+    win_options = {
+      winblend = 0,
+    },
+  },
+  ssh = {
+    border = 'rounded',
+  },
+  keymaps_help = {
+    border = 'rounded',
+  },
+}
+
+local mason_registry = require 'mason-registry'
+local vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
+
+local lspconfig = require 'lspconfig'
+
+lspconfig.ts_ls.setup {
+  init_options = {
+    plugins = {
+      {
+        name = '@vue/typescript-plugin',
+        location = vue_language_server_path,
+        languages = { 'vue' },
+      },
+    },
+  },
+  filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+}
+require('lspconfig').rust_analyzer.setup {
+  settings = {
+    ['rust-analyzer'] = {
+      cargo = {
+        allFeatures = true,
+        loadOutDirsFromCheck = false, -- 🚫 не подгружать output директории от build.rs
+      },
+      procMacro = {
+        enable = false, -- 🚫 отключаем поддержку procedural macros
+      },
+      check = {
+        command = 'clippy', -- ✅ можно поставить "check" если хочешь чуть быстрее
+      },
+    },
+  },
+}
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
