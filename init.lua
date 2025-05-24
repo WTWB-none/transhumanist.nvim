@@ -442,6 +442,13 @@ require('lazy').setup({
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
     },
+    opts = {
+      setup = {
+        rust_analyzer = function()
+          return true
+        end,
+      },
+    },
     config = function()
       -- Brief aside: **What is LSP?**
       --
@@ -941,6 +948,8 @@ require('lazy').setup({
   -- place them in the correct locations.
   require 'custom.plugins.themes.oxocarbon',
   require 'custom.plugins.themes.rosepine',
+  require 'custom.plugins.themes.gruvbox',
+  require 'custom.plugins.rustacian.init',
   require 'custom.plugins.terminal.floating',
   require 'custom.plugins.explorer.fzf',
   require 'custom.plugins.dashboard.dashboard',
@@ -948,6 +957,8 @@ require('lazy').setup({
   require 'custom.plugins.zoxidenvim.zoxide',
   require 'custom.plugins.explorer.oil',
   require 'custom.plugins.vimbegood.VimBeGood',
+  require 'custom.plugins.harpoon.init',
+  require 'custom.plugins.lazygit.init',
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
   --  Here are some example plugins that I've included in the Kickstart repository.
@@ -991,7 +1002,7 @@ require('lazy').setup({
     },
   },
 })
-vim.cmd.colorscheme 'rose-pine-moon'
+vim.cmd.colorscheme 'gruvbox'
 vim.api.nvim_set_hl(0, 'DashboardHeader', { fg = '#FF7EB6' })
 vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#FF7EB6' })
 vim.api.nvim_set_hl(0, 'DashboardKey', { fg = '#FF7EB6' })
@@ -1137,9 +1148,7 @@ require('oil').setup {
   },
 }
 
-local mason_registry = require 'mason-registry'
-local vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
-
+local vue_language_server_path = vim.fn.expand '$MASON/packages' .. '/vue-language-server' .. '/node_modules/@vue/language-server'
 local lspconfig = require 'lspconfig'
 
 lspconfig.ts_ls.setup {
@@ -1154,22 +1163,37 @@ lspconfig.ts_ls.setup {
   },
   filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
 }
-require('lspconfig').rust_analyzer.setup {
-  settings = {
-    ['rust-analyzer'] = {
-      cargo = {
-        allFeatures = true,
-        loadOutDirsFromCheck = false, -- 🚫 не подгружать output директории от build.rs
-      },
-      procMacro = {
-        enable = false, -- 🚫 отключаем поддержку procedural macros
-      },
-      check = {
-        command = 'clippy', -- ✅ можно поставить "check" если хочешь чуть быстрее
-      },
-    },
-  },
-}
 
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+-- No need to set `hybridMode` to `true` as it's the default value
+lspconfig.volar.setup {}
+
+local harpoon = require 'harpoon'
+harpoon:setup()
+
+vim.keymap.set('n', '<leader>zp', function()
+  harpoon.ui:toggle_quick_menu(harpoon:list())
+end, { desc = 'Har[P]oon ui' })
+
+vim.keymap.set('n', '<leader>za', function()
+  harpoon:list():add()
+end, { desc = '[A]dd to harpoon list' })
+
+vim.keymap.set('n', '<C-1>', function()
+  harpoon:list():select(1)
+end)
+
+vim.keymap.set('n', '<C-2>', function()
+  harpoon:list():select(2)
+end)
+
+vim.keymap.set('n', '<C-3>', function()
+  harpoon:list():select(3)
+end)
+
+vim.keymap.set('n', '<C-4>', function()
+  harpoon:list():select(4)
+end)
+
+vim.keymap.set('n', '<leader>gg', '<cmd>:LazyGit<CR>', { desc = 'Open Lazy [G]it' })
+
+vim.lsp.inlay_hint.enable(true)
